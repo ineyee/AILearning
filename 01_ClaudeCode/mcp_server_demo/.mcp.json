@@ -3,6 +3,19 @@
     "fetch": {
       "command": "uvx",
       "args": ["mcp-server-fetch"]
+    },
+    "weather-mcp-server": {
+      "command": "uv",
+      "args": [
+        "--directory",
+        "../my_mcp_servers/weather-mcp-server",
+        "run",
+        "weather-mcp-server.py"
+      ],
+      "disabled": false,
+      "autoApprove": ["get_current_weather", "get_daily_forecast"],
+      "timeout": 60,
+      "transportType": "stdio"
     }
   }
 }
