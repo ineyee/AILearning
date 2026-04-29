@@ -1,0 +1,12 @@
+{
+  "permissions": {
+    "allow": [
+      "mcp__fetch__fetch",
+      "Bash(curl -s \"https://api.github.com/repos/modelcontextprotocol/servers/contents/src/fetch\")"
+    ]
+  },
+  "enableAllProjectMcpServers": true,
+  "enabledMcpjsonServers": [
+    "fetch"
+  ]
+}
