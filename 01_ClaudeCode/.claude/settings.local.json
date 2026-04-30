@@ -1,7 +1,19 @@
 {
   "permissions": {
     "allow": [
-      "Bash(git *)"
+      "Bash(git *)",
+      "Bash(python3 -c \"import json,sys; d=json.load\\(sys.stdin\\); print\\(list\\(d.keys\\(\\)\\)\\)\")",
+      "Bash(python3 -m json.tool)",
+      "Bash(claude skills *)",
+      "Bash(claude plugin *)",
+      "Bash(npx skills *)",
+      "Read(//Users/yiyi/.claude/skills/**)",
+      "Bash(mkdir -p ~/.claude/skills/li-meijin-perspective/references/research)",
+      "Bash(mkdir -p ~/.claude/skills/li-meijin-perspective/references/sources/books)",
+      "Bash(mkdir -p ~/.claude/skills/li-meijin-perspective/references/sources/transcripts)",
+      "Bash(mkdir -p ~/.claude/skills/li-meijin-perspective/references/sources/articles)",
+      "Bash(mkdir -p ~/.claude/skills/li-meijin-perspective/scripts)",
+      "Skill(update-config)"
     ]
   }
 }
