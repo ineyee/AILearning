@@ -13,7 +13,12 @@
       "Bash(mkdir -p ~/.claude/skills/li-meijin-perspective/references/sources/transcripts)",
       "Bash(mkdir -p ~/.claude/skills/li-meijin-perspective/references/sources/articles)",
       "Bash(mkdir -p ~/.claude/skills/li-meijin-perspective/scripts)",
-      "Skill(update-config)"
+      "Skill(update-config)",
+      "Bash(mkdir -p /Users/ineyee/Desktop/AILearning/01_ClaudeCode/.claude/skills/huashu-nuwa)",
+      "Bash(cp -r /tmp/nuwa-skill/* /Users/ineyee/Desktop/AILearning/01_ClaudeCode/.claude/skills/huashu-nuwa/)",
+      "Bash(rm -rf /tmp/nuwa-skill)",
+      "Bash(mkdir -p ~/.claude/skills/huashu-nuwa)",
+      "Bash(cp -r /tmp/nuwa-skill/* ~/.claude/skills/huashu-nuwa/)"
     ]
   }
 }
