@@ -3,6 +3,13 @@ name: meeting-summary
 description: 根据会议内容生成摘要。当用户表达“会议摘要”、“总结会议”等意图时触发。
 ---
 
+## 输入预处理
+如果用户传入的会议内容包含时间戳（格式如 `[00:00:01.000 --> 00:00:05.000]`），说明这是 ASR 原始转写文本，需要先清洗：
+1、将内容保存到系统临时文件 `/tmp/asr_input.txt`
+2、执行脚本：`python3 ./scripts/asr_postprocess.py /tmp/asr_input.txt -o /tmp/asr_clean.txt`
+3、读取 `/tmp/asr_clean.txt` 的内容，作为后续生成摘要的输入
+如果输入不含时间戳，跳过此步骤，直接使用原始输入
+
 ## 路由
 #### 人事会议
 触发条件：
