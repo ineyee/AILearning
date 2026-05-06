@@ -1,0 +1,12 @@
+{
+  "weather-mcp-server": {
+    "command": "uv",
+    "args": [
+      "--directory", "${CLAUDE_PLUGIN_ROOT}/mcp-servers/weather-mcp-server",
+      "run", "weather-mcp-server.py"
+    ],
+    "autoApprove": ["get_current_weather", "get_daily_forecast"],
+    "timeout": 60,
+    "transportType": "stdio"
+  }
+}
