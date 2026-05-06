@@ -1,0 +1,17 @@
+{
+  "name": "my-first-plugin",
+  "description": "集 xxx 于一身的工作流能力系统",
+  "version": "1.0.0",
+  "author": {
+    "name": "xxx",
+    "email": "xxx"
+  },
+  "mcpServers": "./.mcp.json",
+  "skills": [
+    "./skills/meeting-summary"
+  ],
+  "agents": [
+    "./agents/weekly-report-writer.md"
+  ],
+  "hooks": "./hooks/hooks.json"
+}

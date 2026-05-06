@@ -1,12 +1,12 @@
 {
-  "name": "my-plugins",
+  "name": "my-marketplace",
   "owner": {
-    "name": "local"
+    "name": "xxx"
   },
   "plugins": [
     {
-      "name": "my-purchase-plugin",
-      "source": "./my-purchase-plugin"
+      "name": "my-first-plugin",
+      "source": "./my-first-plugin"
     }
   ]
 }
