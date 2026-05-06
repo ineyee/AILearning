@@ -1,0 +1,16 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(gh api *)",
+      "Bash(python3 -c \"import json,sys; [print\\(f['name'], f['type']\\) for f in json.load\\(sys.stdin\\)]\")",
+      "Bash(curl -s \"https://api.github.com/repos/anthropics/claude-code/contents/plugins/frontend-design?ref=9fce4e6ed16244127de19b1eee02508c6dc2d29e\")",
+      "Bash(python3 -c \"import json,sys; data=json.load\\(sys.stdin\\); [print\\(f['name'], f['type'], f.get\\('download_url',''\\)\\) for f in data]\")",
+      "Bash(curl -s \"https://raw.githubusercontent.com/anthropics/claude-code/9fce4e6ed16244127de19b1eee02508c6dc2d29e/plugins/frontend-design/.claude-plugin/plugin.json\")",
+      "Bash(curl -s \"https://api.github.com/repos/anthropics/claude-code/contents/plugins/frontend-design/skills/frontend-design?ref=9fce4e6ed16244127de19b1eee02508c6dc2d29e\")",
+      "Bash(curl *)"
+    ]
+  },
+  "enabledPlugins": {
+    "frontend-design@claude-plugins-official": true
+  }
+}
