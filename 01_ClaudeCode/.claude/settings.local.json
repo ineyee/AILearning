@@ -18,7 +18,12 @@
       "Bash(cp -r /tmp/nuwa-skill/* /Users/ineyee/Desktop/AILearning/01_ClaudeCode/.claude/skills/huashu-nuwa/)",
       "Bash(rm -rf /tmp/nuwa-skill)",
       "Bash(mkdir -p ~/.claude/skills/huashu-nuwa)",
-      "Bash(cp -r /tmp/nuwa-skill/* ~/.claude/skills/huashu-nuwa/)"
+      "Bash(cp -r /tmp/nuwa-skill/* ~/.claude/skills/huashu-nuwa/)",
+      "Bash(pandoc --version)",
+      "WebFetch(domain:github.com)",
+      "WebFetch(domain:playbooks.com)",
+      "WebFetch(domain:lobehub.com)",
+      "Bash(curl *)"
     ]
   }
 }
