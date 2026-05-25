@@ -1,0 +1,23 @@
+#:schema https://developers.openai.com/codex/config-schema.json
+
+[mcp_servers.fetch]
+command = "uvx"
+args = ["mcp-server-fetch"]
+enabled = true
+startup_timeout_sec = 30
+tool_timeout_sec = 60
+
+[mcp_servers.weather-mcp-server]
+command = "uv"
+args = [
+  "--directory",
+  "my_mcp_servers/weather-mcp-server",
+  "run",
+  "weather-mcp-server.py"
+]
+enabled = true
+startup_timeout_sec = 60
+[mcp_servers.weather-mcp-server.tools.get_current_weather]
+approval_mode = "approve"
+[mcp_servers.weather-mcp-server.tools.get_daily_forecast]
+approval_mode = "approve"
