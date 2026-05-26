@@ -1,0 +1,24 @@
+{
+  "name": "my-first-plugin",
+  "description": "集 weather MCP、会议总结、代码格式化 hook 于一身的 Codex 工作流能力系统",
+  "version": "1.0.0",
+  "author": {
+    "name": "张三",
+    "email": "zhangsan@qq.com"
+  },
+  "mcpServers": "./.mcp.json",
+  "skills": "./skills/",
+  "hooks": "./hooks/hooks.json",
+  "interface": {
+    "displayName": "My First Plugin",
+    "shortDescription": "Weather、会议总结和代码格式化工作流",
+    "longDescription": "把 weather MCP server、meeting-summary skill 和自动格式化代码 hook 打包成一个可复用的 Codex plugin。",
+    "developerName": "张三",
+    "category": "Productivity",
+    "capabilities": ["Read", "Write"],
+    "defaultPrompt": [
+      "Use My First Plugin .",
+      "Use My First Plugin to check the weather before scheduling, to summarize this meeting transcript, to formar your dart code."
+    ]
+  }
+}

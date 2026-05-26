@@ -1,0 +1,17 @@
+{
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 format-dart-after-edit.py",
+            "timeout": 30,
+            "statusMessage": "Formatting Dart files"
+          }
+        ]
+      }
+    ]
+  }
+}
