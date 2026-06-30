@@ -25,9 +25,9 @@
 
 #### 1、本机（macOS）
 
-###### 1.1 下载并安装 Ollma
+###### 1.1 下载并安装 Ollama
 
-* 下载地址：https://ollama.com/download/mac，下载完成后双击安装即可，默认会安装到应用程序目录
+* 下载地址：https://ollama.com/download/mac，下载完成后双击安装即可，默认会安装到应用程序目录下
 * 此时在终端里输入 `ollama -v` 或 `ollama --version`，如果能看到版本号，代表安装成功
 
 ***
@@ -59,7 +59,7 @@
 
 #### 2、服务器（Linux）
 
-###### 1.1 下载并安装 Ollma
+###### 2.1 下载并安装 Ollama
 
 * 在服务器远程连接的终端里执行如下命令即可自动下载并安装 Ollama：`curl -fsSL https://ollama.com/install.sh | sh`
   * 可执行文件默认会安装到 `/usr/local/bin/ollama` 目录下
@@ -69,11 +69,11 @@
 ***
 
 * 安装成功后安装脚本还会自动为 Ollama 创建系统服务、自动启动 Ollama、自动设置 Ollama 开机自启动
-* 此时在终端里输入 `systemctl status ollama`，如果看到 active(running)，代表启动成功
+* 此时在终端里输入 `systemctl status ollama`，如果看到 active(running)，代表 Ollama 处于运行状态
 
 ***
 
-* Ollama 默认监听 11434 端口，但是 Ollama 默认只监听 127.0.0.1 这个本机回环地址，而不监听当前服务器以外的其它 IP 地址，这就意味着我们只能在当前服务器上访问 Ollama，而无法在其它客户端访问这台服务器上的 Ollama。实际开发中也确实就是这样的模式，客户端通过“https://api.xxx.com/chat”这样的业务 API 访问服务器，服务器上业务 API 内部再通过“http://127.0.0.1:11434”来访问 Ollama，而不是将 Ollama 直接暴露给客户端访问
+* Ollama 默认监听 11434 端口，但是 Ollama 默认只监听 127.0.0.1 这个本机回环地址，而不监听当前服务器以外的其它 IP 地址，这就意味着我们只能在当前服务器上访问 Ollama，而无法在其它客户端访问这台服务器上的 Ollama。实际开发中也确实就是这样的模式，客户端通过“https://api.xxx.com/chat”这样的业务 API 访问服务器，服务器上业务 API 内部再通过“http://localhost:11434/api/chat”来访问 Ollama，而不是将 Ollama 直接暴露给客户端访问
 * 此时在终端里输入 `curl http://127.0.0.1:11434/api/tags`，如果看到 {"models":[]}，代表 Ollama 服务的 API 是通的
 
 ***
@@ -89,13 +89,13 @@ systemctl restart ollama  # 重启
 
 ###### 2.2 Ollama 部署和运行大语言模型
 
-* 这里以 deepseek-r1:1.5b 为例
+* 首先要知道 Ollama 并不是支持所有大语言模型的本地部署，只有它们官方支持的大语言模型才行，在 https://ollama.com/search 这里可以看到 Ollama 官方支持那些大语言模型，这里以 deepseek-r1:1.5b 为例
 
 * 搜索 deepseek-r1
 
   ![8b027dca-0fe0-4ae8-bcc6-b6c7f6067372](img/8b027dca-0fe0-4ae8-bcc6-b6c7f6067372.png)
 
-* 点进来找到各个版本的蒸馏模型
+* 点进来找到各个蒸馏版模型
 
   ![image-20260626111042944](img/image-20260626111042944.png)
 
@@ -105,7 +105,7 @@ systemctl restart ollama  # 重启
 
 * 复制 `ollama run deepseek-r1:1.5b` 命令去终端执行，我们就可以在终端里跟这个模型对话了
 
-  * 如果本地没有 deepseek-r1:1.5b 模型，那么 run 命令会先下载并安装这个模型到本地（会把模型下载到这个目录下 `/usr/share/ollama/.ollama/models`。blobs 存真正的大模型文件，通常是 sha256-... 这种名字，manifests 存模型标签和元数据，比如 deepseek-r1:7b 指向哪些 blobs，我们可以在终端执行 `ollama list`  命令来查看 Ollama 本地部署了哪些模型），然后再在终端运行这个模型
+  * 如果本地没有 deepseek-r1:1.5b 模型，那么 run 命令会先下载并安装这个模型到本地（会把模型下载到这个目录下 `/usr/share/ollama/.ollama/models`。blobs 存真正的大模型文件，通常是 sha256-... 这种名字，manifests 存模型标签和元数据，比如 deepseek-r1:1.5b 指向哪些 blobs，我们可以在终端执行 `ollama list`  命令来查看 Ollama 本地部署了哪些模型），然后再在终端运行这个模型
   * 如果本地有 deepseek-r1:1.5b 模型，那么 run 命令会直接在终端运行这个模型
 
   ![ba97ef3e-70ef-45d8-8fef-8f85e6e00007](img/ba97ef3e-70ef-45d8-8fef-8f85e6e00007.png)
