@@ -1,16 +1,41 @@
 ## 一、安装 Python 环境
 
 * macOS 自带 Python 环境，通常是 3.9.x，它主要用来给系统工具用，不建议把它作为开发主环境，建议自己安装 Python 环境
+  * python 解释器：用来解释执行 .py 文件
+  * python 标准库：如 os 库、sys 库、json 库、datetime 库等
+  * pip：包管理工具
+  * venv：虚拟环境工具，可以给每个 Python 项目单独创建一个隔离的 Python 环境，以便安装该项目的三方包，这样可以避免把三方包都安装全局 Python 里，避免跟其它项目出现依赖版本冲突（Python 包管理不是靠版本区分的那种方式，所以不能在 Python 全局里安装同一个三方包的不同版本，同一个三方包只能存在一个版本）
 * 这里选择下载 Python 3.12.x
 * 终端里执行 `brew install python@3.12` 安装即可，默认会安装到 /usr/local/opt/python@3.12 目录（/ 代表根目录 Macintosh HD，~/ 代表当前用户目录 /Users/ineyee）
 
 ***
 
 * 在 .bash_profile 里配置一下环境变量：export PATH="/usr/local/opt/python@3.12/libexec/bin:$PATH"
+* source ~/.bash_profile 使配置生效
+* 终端执行 python --version 或 python -V 来验证是否安装成功
 
+## 二、安装 Anaconda
 
+* 原版 Python 环境像一个毛坯房，而 Anaconda 则是一个基于 Python、面向数据分析/机器学习/深度学习/AI 的精装房，安装了 Anaconda 你可以得到：
+  * Python 解释器
+  * Python 标准库
+  * pip
+  * venv
+  * **conda：包管理工具 + 虚拟环境工具**（venv + pip 进行虚拟环境和包管理，对于普通 Python 开发完全够用，但是在数据分析/机器学习/深度学习/AI 场景下可能会有各种编译错误，使用 conda 更省心。自带了一个 base 虚拟环境，默认情况下就处于这个虚拟环境下，**但是建议给每个正式 Python 项目都单独建一个虚拟环境，不要都用这个 base 虚拟环境**）
+  * **自带了大量常用的数据科学三方包**
+  * Jupyter Notebook：一个终端启动、浏览器 GUI 里使用的交互式 Python 编程工具，边写代码边看结果
+  * Anaconda-Navigator：如果我们不想在终端里操作，可以使用这个 GUI 工具
 
-## 二、安装 PyCharm
+* Anaconda 下载地址：https://www.anaconda.com/download/success
+* 这里选择下载 Anaconda 26.1.1
+* 下载完双击安装即可，默认会安装到 /opt/anaconda3 目录（/ 代表根目录 Macintosh HD，~/ 代表当前用户目录 /Users/ineyee）
+
+***
+
+* 环境变量也自动帮我们配置好了
+* 终端执行 conda --version 或 conda -V 来验证是否安装成功
+
+## 三、安装 PyCharm
 
 * PyCharm 下载地址：https://www.jetbrains.com/zh-cn/pycharm/download/?section=mac
 * 这里选择下载 PyCharm 2025.1
@@ -36,18 +61,19 @@
 
 * 关闭 PyCharm 的自动检查更新，IntelliJ IDEA - Settings - Appearance & Behavior - System Settings - Updates - 取消勾选
 
-
-
-## 三、安装 Anaconda
-
-Anaconda 的作用：xxx
-
-* Anaconda 下载地址：https://www.anaconda.com/download/success
-* 这里选择下载 Anaconda 26.1.1
-* 下载完双击安装即可，默认会安装到 /opt/anaconda3 目录（/ 代表根目录 Macintosh HD，~/ 代表当前用户目录 /Users/ineyee），还提供了一个 Anaconda-Navigator 的 GUI 软件来方便我们使用、当然我们可以直接在终端里操作 Anaconda
-
 ***
 
-* 环境变量也自动帮我们配置好了
-* 终端执行 conda --version 或 conda -V 来验证是否安装成功
+* IDEA - New Project - Pure Python
+* Location：项目所在父目录 + 项目名，/Users/yiyi/Desktop/hello-python
+* Interpreter Type：解释器类型
+  * Project venv：会用原版 Python 为每个项目创建一个独立的虚拟环境，不推荐
+  * Base conda：所有项目都是用 Anaconda 自带的 base 虚拟环境，不推荐
+  * Custom environment：我们可以用 Anaconda 为每个项目创建一个独立的虚拟环境，推荐
+
+* Environment：Generate new（建议总是“一个项目 = 一个独立虚拟环境”，除非几个项目只是很简单的练习项目，而且依赖几乎一样）
+* Type：Conda
+* Python version：选择相应版本的 python
+* Name：虚拟环境的名字
+* Path to conda：PyCharm 要通过哪个 conda 程序来创建和管理环境
+* Create（这样就创建好了项目）
 
