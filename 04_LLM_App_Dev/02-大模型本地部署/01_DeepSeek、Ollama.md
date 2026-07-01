@@ -73,8 +73,51 @@
 
 ***
 
-* Ollama 默认监听 11434 端口，但是 Ollama 默认只监听 127.0.0.1 这个本机回环地址，而不监听当前服务器以外的其它 IP 地址，这就意味着我们只能在当前服务器上访问 Ollama，而无法在其它客户端访问这台服务器上的 Ollama。实际开发中也确实就是这样的模式，客户端通过“https://api.xxx.com/chat”这样的业务 API 访问服务器，服务器上业务 API 内部再通过“http://localhost:11434/api/chat”来访问 Ollama，而不是将 Ollama 直接暴露给客户端访问
+* Ollama 默认监听 11434 端口，但是 Ollama 默认只监听 127.0.0.1 这个本机回环地址，而不监听当前服务器以外的其它 IP 地址，这就意味着我们只能在当前服务器上访问 Ollama，而无法在其它客户端访问这台服务器上的 Ollama。实际开发中也确实就是这样的模式，客户端通过“https://api.xxx.com/chat”这样的业务 API 访问服务器，服务器上业务 API 内部再通过“http://localhost:11434/api/chat”来访问 Ollama，而不是将 Ollama 直接暴露给客户端访问。终端里执行 `ss -lntp | grep 11434`，可以查看是哪个进程在监听 11434 端口、监听在哪个地址上
+
+  ```ini
+  root@iZbp1j9gribyqw3tu55hw4Z:~# ss -lntp | grep 11434
+  LISTEN 0      4096       127.0.0.1:11434      0.0.0.0:*    users:(("ollama",pid=12632,fd=4))
+  
+  # 可见 ollama 的确默认监听 11434 端口、监听在 127.0.0.1 这个本地回环地址上
+  # 0.0.0.0:* 是等待任意客户端来连接的意思，等待任意客户端来连接并不等于任意客户端都能连接通
+  ```
+
 * 此时在终端里输入 `curl http://127.0.0.1:11434/api/tags`，如果看到 {"models":[]}，代表 Ollama 服务的 API 是通的
+
+* 当然在学习过程中，如果你非要将 Ollama 直接暴露给客户端访问也是可以的，只需要改一下配置文件即可（注意不要直接改 `/etc/systemd/system/ollama.service`，用 `systemctl edit ollama` 更规范，它会创建 override 配置，后续更新或重装 Ollama 时不容易被覆盖）
+
+  * 终端里执行：
+
+    ```shell
+    mkdir -p /etc/systemd/system/ollama.service.d
+    
+    cat > /etc/systemd/system/ollama.service.d/override.conf <<'EOF'
+    [Service]
+    Environment="OLLAMA_HOST=0.0.0.0:11434"
+    Environment="OLLAMA_ORIGINS=*"
+    EOF
+    
+    # 第一项配置的作用：让 Ollama 从只监听 127.0.0.1:11434，改成监听 0.0.0.0:11434，也就是允许外部任意网络连到这个端口
+    # 第二项配置的作用：处理浏览器跨域问题，如果你要在浏览器页面里直接访问 Ollama 那就得加这一项
+    ```
+
+  * 终端里执行 `systemctl daemon-reload` ，让 systemd 重新读取 Ollama 服务配置文件
+
+  * 终端里执行 `systemctl restart ollama`，重启 Ollama 服务
+
+  * 终端里执行 `ss -lntp | grep 11434`，确定 Ollama 监听的地址已变成任意公网地址
+
+    ```ini
+    root@iZbp1j9gribyqw3tu55hw4Z:~# ss -lntp | grep 11434
+    LISTEN 0      4096       0.0.0.0:11434      0.0.0.0:*    users:(("ollama",pid=12632,fd=4))
+    
+    # 可见 ollama 的确默认监听 11434 端口、监听在 0.0.0.0 任意网络地址上
+    # 0.0.0.0:* 是等待任意客户端来连接的意思，等待任意客户端来连接并不等于任意客户端都能连接通
+    ```
+
+  * 然后在服务器的网络与安全组里放行 11434 端口
+  * 此时在浏览器里输入 `http://120.27.201.91:11434/api/tags`，如果看到 {"models":[]}，代表 Ollama 服务的 API 是通的
 
 ***
 
