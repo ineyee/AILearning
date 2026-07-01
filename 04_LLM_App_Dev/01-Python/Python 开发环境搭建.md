@@ -1,4 +1,4 @@
-## 一、安装 Python 环境
+## 一、本机安装 Python 环境
 
 * macOS 自带 Python 环境，通常是 3.9.x，它主要用来给系统工具用，不建议把它作为开发主环境，建议自己安装 Python 环境
   * python 解释器：用来解释执行 .py 文件
@@ -14,9 +14,9 @@
 * source ~/.bash_profile 使配置生效
 * 终端执行 python --version 或 python -V 来验证是否安装成功
 
-## 二、安装 Anaconda
+## 二、本机安装 Anaconda
 
-* 原版 Python 环境像一个毛坯房，而 Anaconda 则是一个基于 Python、面向数据分析/机器学习/深度学习/AI 的精装房，安装了 Anaconda 你可以得到：
+* 但是原版 Python 环境像一个毛坯房，而 Anaconda 则是一个基于 Python、面向数据分析/机器学习/深度学习/AI 的精装房，安装了 Anaconda 你可以得到：
   * Python 解释器
   * Python 标准库
   * pip
@@ -35,7 +35,7 @@
 * 环境变量也自动帮我们配置好了
 * 终端执行 conda --version 或 conda -V 来验证是否安装成功
 
-## 三、安装 PyCharm
+## 三、本机安装 PyCharm
 
 * PyCharm 下载地址：https://www.jetbrains.com/zh-cn/pycharm/download/?section=mac
 * 这里选择下载 PyCharm 2025.1
@@ -76,4 +76,23 @@
 * Name：虚拟环境的名字
 * Path to conda：PyCharm 要通过哪个 conda 程序来创建和管理环境
 * Create（这样就创建好了项目）
+
+## 服务器安装 Anaconda（暂时放在这里，后续移到部署章节）
+
+开发项目时本机用 Anaconda 创建虚拟环境，把项目部署到服务器时虚拟环境不会自带到服务器，所以服务器就无法运行我们的项目，因此服务器也得安装 Anaconda 来给项目创建跟开发时一致的虚拟环境（**当然实际开发中，我们更推荐用 Docker 来部署项目，直接把项目代码和环境一起打包，这样一来服务器就不用安装 Anaconda 来创建虚拟环境了**）
+
+* 终端执行 `uname -m` 确认服务器架构
+  * 如果是 x86_64 架构，在 https://repo.anaconda.com/archive/ 找到 https://repo.anaconda.com/archive/Anaconda3-2025.12-2-Linux-x86_64.sh 之类的脚本待用
+  * 如果是 aarch64 架构，在 https://repo.anaconda.com/archive/ 找到 https://repo.anaconda.com/archive/Anaconda3-2025.12-2-Linux-aarch64.sh 之类的脚本待用
+* 终端执行 `sudo apt install -y wget curl bzip2 ca-certificates` 或 `sudo yum install -y wget curl bzip2 ca-certificates` 安装基础工具
+* 终端执行 `cd /tmp` 进入临时目录
+* 终端执行 `wget https://repo.anaconda.com/archive/Anaconda3-2025.12-2-Linux-x86_64.sh` 下载官方安装包
+* 终端执行 `bash Anaconda3-2025.12-2-Linux-x86_64.sh` 即可开始安装流程
+  * 第一步：看到欢迎信息后按 Enter
+  * 第二步：阅读协议后输入 yes
+  * 第三步：选择安装路径，会提示默认安装路径 /root/anaconda3，一般直接按 Enter 就行
+  * 第四步：安装快结束时会问“是否自动初始化 conda”，建议输入 yes，这一步会自动修改服务器的 shell 配置文件（~/.bashrc 或 ~/.zshrc）来为 conda 配置环境变量
+  * 第五步：此时 Anaconda 建议我们安装完成后关闭并重新打开终端来时配置生效，我们也可以终端执行 `source ~/.bashrc` 或 `source ~/.zshrc` 使配置生效
+* 终端执行 conda --version 或 conda -V 来验证是否安装成功
+* 安装成功后，会看到命令行前面多了一个 (base)，这表示当前处于 conda 的自带的 base 环境。建议终端执行 `conda config --set auto_activate_base false` 关闭自动激活 base，以后需要用 conda 时再手动激活环境，关闭后记得终端执行 `source ~/.bashrc` 或 `source ~/.zshrc` 使配置生效
 
