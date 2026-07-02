@@ -1,0 +1,2697 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Ollama Local API - Native, OpenAI Compatible, Anthropic Compatible",
+    "version": "2026-07-01",
+    "description": "Ollama 本地服务 API 集合，适合导入 Apifox。默认服务地址为 http://localhost:11434。\n\n包含：Ollama 原生 API、OpenAI 兼容 API、Anthropic Messages 兼容 API，以及文档中出现的 blob / legacy embeddings 端点。"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:11434",
+      "description": "Ollama local server"
+    }
+  ],
+  "tags": [
+    {
+      "name": "Ollama Native - Generation",
+      "description": "Ollama 原生生成、对话、向量接口"
+    },
+    {
+      "name": "Ollama Native - Models",
+      "description": "Ollama 原生模型管理接口"
+    },
+    {
+      "name": "Ollama Native - Blobs / Legacy",
+      "description": "Blob 上传检测与历史兼容接口"
+    },
+    {
+      "name": "OpenAI Compatible",
+      "description": "OpenAI 兼容接口，base_url 可设为 http://localhost:11434/v1/"
+    },
+    {
+      "name": "Anthropic Compatible",
+      "description": "Anthropic Messages 兼容接口，base_url 可设为 http://localhost:11434"
+    }
+  ],
+  "paths": {
+    "/api/generate": {
+      "post": {
+        "tags": [
+          "Ollama Native - Generation"
+        ],
+        "summary": "Generate / 内容生成",
+        "description": "使用指定模型对 prompt 生成响应。也可用于加载 / 卸载模型；图片生成模型会通过此接口返回图片。部分接口默认返回流式 JSON 对象；在请求体传 stream=false 可改为单个 JSON 对象。",
+        "operationId": "ollamaGenerate",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/OllamaGenerateRequest"
+              },
+              "example": {
+                "model": "qwen2.5:7b",
+                "prompt": "介绍一下 Ollama 是什么",
+                "stream": false
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OllamaGenerateResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/chat": {
+      "post": {
+        "tags": [
+          "Ollama Native - Generation"
+        ],
+        "summary": "Chat / 聊天对话",
+        "description": "基于 messages 数组生成下一条 assistant 消息。适合多轮对话、工具调用、视觉输入。部分接口默认返回流式 JSON 对象；在请求体传 stream=false 可改为单个 JSON 对象。",
+        "operationId": "ollamaChat",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/OllamaChatRequest"
+              },
+              "example": {
+                "model": "qwen2.5:7b",
+                "messages": [
+                  {
+                    "role": "user",
+                    "content": "你是谁？"
+                  }
+                ],
+                "stream": false
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OllamaChatResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/embed": {
+      "post": {
+        "tags": [
+          "Ollama Native - Generation"
+        ],
+        "summary": "Embed / 生成向量",
+        "description": "生成文本 embedding。支持单条文本或文本数组。",
+        "operationId": "ollamaEmbed",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/OllamaEmbedRequest"
+              },
+              "example": {
+                "model": "embeddinggemma",
+                "input": "Ollama 可以本地运行大模型"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OllamaEmbedResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/tags": {
+      "get": {
+        "tags": [
+          "Ollama Native - Models"
+        ],
+        "summary": "Tags / 本地模型列表",
+        "description": "获取本地可用模型列表及其详情。",
+        "operationId": "ollamaListModels",
+        "responses": {
+          "200": {
+            "description": "List available models",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "models": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/ModelSummary"
+                      }
+                    }
+                  },
+                  "additionalProperties": true
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/ps": {
+      "get": {
+        "tags": [
+          "Ollama Native - Models"
+        ],
+        "summary": "Ps / 运行中模型列表",
+        "description": "获取当前加载到内存中的运行中模型列表。",
+        "operationId": "ollamaListRunningModels",
+        "responses": {
+          "200": {
+            "description": "Models currently loaded into memory",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "models": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/RunningModelSummary"
+                      }
+                    }
+                  },
+                  "additionalProperties": true
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/show": {
+      "post": {
+        "tags": [
+          "Ollama Native - Models"
+        ],
+        "summary": "Show / 查询模型详情",
+        "description": "查看模型详情，包括 modelfile、template、parameters、license、system prompt、capabilities 等。",
+        "operationId": "ollamaShowModel",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/OllamaShowRequest"
+              },
+              "example": {
+                "model": "qwen2.5:7b",
+                "verbose": false
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/create": {
+      "post": {
+        "tags": [
+          "Ollama Native - Models"
+        ],
+        "summary": "Create / 创建模型",
+        "description": "从已有模型、GGUF 文件、safetensors 目录或自定义参数创建模型。部分接口默认返回流式 JSON 对象；在请求体传 stream=false 可改为单个 JSON 对象。",
+        "operationId": "ollamaCreateModel",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/OllamaCreateRequest"
+              },
+              "example": {
+                "model": "my-qwen",
+                "from": "qwen2.5:7b",
+                "system": "You are a helpful assistant.",
+                "stream": false
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StatusResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/copy": {
+      "post": {
+        "tags": [
+          "Ollama Native - Models"
+        ],
+        "summary": "Copy / 复制模型",
+        "description": "把已有模型复制为一个新名称。",
+        "operationId": "ollamaCopyModel",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/OllamaCopyRequest"
+              },
+              "example": {
+                "source": "qwen2.5:7b",
+                "destination": "qwen2.5-backup:7b"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Model successfully copied"
+          },
+          "404": {
+            "description": "Source model not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/pull": {
+      "post": {
+        "tags": [
+          "Ollama Native - Models"
+        ],
+        "summary": "Pull / 拉取模型",
+        "description": "从 Ollama 模型库下载模型。默认流式返回进度。",
+        "operationId": "ollamaPullModel",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/OllamaPullRequest"
+              },
+              "example": {
+                "model": "qwen2.5:7b",
+                "stream": false
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StatusResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/push": {
+      "post": {
+        "tags": [
+          "Ollama Native - Models"
+        ],
+        "summary": "Push / 推送模型",
+        "description": "推送模型到模型库。默认流式返回进度。",
+        "operationId": "ollamaPushModel",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/OllamaPushRequest"
+              },
+              "example": {
+                "model": "my-username/my-model:latest",
+                "stream": false
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StatusResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/delete": {
+      "delete": {
+        "tags": [
+          "Ollama Native - Models"
+        ],
+        "summary": "Delete / 删除模型",
+        "description": "删除本地模型。",
+        "operationId": "ollamaDeleteModel",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/OllamaDeleteRequest"
+              },
+              "example": {
+                "model": "qwen2.5:7b"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Model successfully deleted"
+          },
+          "404": {
+            "description": "Model not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/version": {
+      "get": {
+        "tags": [
+          "Ollama Native - Models"
+        ],
+        "summary": "Version / 获取 Ollama 版本",
+        "operationId": "ollamaVersion",
+        "responses": {
+          "200": {
+            "description": "Version information",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "version": {
+                      "type": "string",
+                      "example": "0.12.6"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/blobs/{digest}": {
+      "head": {
+        "tags": [
+          "Ollama Native - Blobs / Legacy"
+        ],
+        "summary": "Check Blob Exists / 检查 blob 是否存在",
+        "description": "用于从 GGUF / safetensors 创建模型前检查文件 blob 是否已存在。digest 形如 sha256:...。",
+        "operationId": "ollamaCheckBlob",
+        "parameters": [
+          {
+            "name": "digest",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "sha256:29fdb92e57cf0827ded04ae6461b5931d01fa595843f55d36f5b275a52087dd2"
+            },
+            "description": "SHA256 digest"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Blob exists"
+          },
+          "404": {
+            "description": "Blob does not exist"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Ollama Native - Blobs / Legacy"
+        ],
+        "summary": "Push Blob / 上传 blob",
+        "description": "上传模型文件 blob。请求体为二进制文件内容，digest 为预期 sha256。",
+        "operationId": "ollamaPushBlob",
+        "parameters": [
+          {
+            "name": "digest",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "sha256:29fdb92e57cf0827ded04ae6461b5931d01fa595843f55d36f5b275a52087dd2"
+            },
+            "description": "SHA256 digest"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/octet-stream": {
+              "schema": {
+                "type": "string",
+                "format": "binary"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Blob created"
+          },
+          "400": {
+            "description": "Bad digest or invalid blob"
+          }
+        }
+      }
+    },
+    "/api/embeddings": {
+      "post": {
+        "tags": [
+          "Ollama Native - Blobs / Legacy"
+        ],
+        "summary": "Legacy Embeddings / 旧版向量接口",
+        "description": "历史接口，官方文档注明已由 /api/embed 替代。",
+        "operationId": "ollamaLegacyEmbeddings",
+        "deprecated": true,
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/OllamaLegacyEmbeddingsRequest"
+              },
+              "example": {
+                "model": "all-minilm",
+                "prompt": "Here is an article about llamas..."
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Embedding vector",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "embedding": {
+                      "type": "array",
+                      "items": {
+                        "type": "number"
+                      }
+                    }
+                  },
+                  "additionalProperties": true
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/chat/completions": {
+      "post": {
+        "tags": [
+          "OpenAI Compatible"
+        ],
+        "summary": "OpenAI Chat Completions",
+        "description": "OpenAI 兼容聊天补全接口。支持 streaming、JSON mode、vision、tools、reasoning/thinking control、logprobs 等。",
+        "operationId": "openaiChatCompletions",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/OpenAIChatCompletionsRequest"
+              },
+              "example": {
+                "model": "qwen2.5:7b",
+                "messages": [
+                  {
+                    "role": "user",
+                    "content": "Say this is a test"
+                  }
+                ],
+                "stream": false
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/completions": {
+      "post": {
+        "tags": [
+          "OpenAI Compatible"
+        ],
+        "summary": "OpenAI Completions",
+        "description": "OpenAI 兼容文本补全接口。Ollama 文档说明 prompt 当前仅支持 string。",
+        "operationId": "openaiCompletions",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/OpenAICompletionsRequest"
+              },
+              "example": {
+                "model": "qwen2.5:7b",
+                "prompt": "Say this is a test",
+                "stream": false
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/embeddings": {
+      "post": {
+        "tags": [
+          "OpenAI Compatible"
+        ],
+        "summary": "OpenAI Embeddings",
+        "description": "OpenAI 兼容向量接口。",
+        "operationId": "openaiEmbeddings",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/OpenAIEmbeddingsRequest"
+              },
+              "example": {
+                "model": "embeddinggemma",
+                "input": "Ollama 可以本地运行大模型"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/models": {
+      "get": {
+        "tags": [
+          "OpenAI Compatible"
+        ],
+        "summary": "OpenAI Models List",
+        "description": "OpenAI 兼容模型列表接口。",
+        "operationId": "openaiListModels",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/models/{model}": {
+      "get": {
+        "tags": [
+          "OpenAI Compatible"
+        ],
+        "summary": "OpenAI Retrieve Model",
+        "description": "OpenAI 兼容模型详情接口。",
+        "operationId": "openaiRetrieveModel",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "model",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "qwen2.5:7b"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/images/generations": {
+      "post": {
+        "tags": [
+          "OpenAI Compatible"
+        ],
+        "summary": "OpenAI Images Generations - Experimental",
+        "description": "OpenAI 兼容图片生成接口，Ollama 文档标注为实验性，且 response_format 目前仅支持 b64_json。",
+        "operationId": "openaiImageGenerations",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/OpenAIImagesRequest"
+              },
+              "example": {
+                "model": "x/z-image-turbo",
+                "prompt": "A cute robot learning to paint",
+                "size": "1024x1024",
+                "response_format": "b64_json"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/responses": {
+      "post": {
+        "tags": [
+          "OpenAI Compatible"
+        ],
+        "summary": "OpenAI Responses",
+        "description": "OpenAI Responses 兼容接口。Ollama 文档说明仅支持非 stateful 风格，previous_response_id / conversation 不支持。",
+        "operationId": "openaiResponses",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/OpenAIResponsesRequest"
+              },
+              "example": {
+                "model": "qwen2.5:7b",
+                "input": "Write a short poem about the color blue"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/messages": {
+      "post": {
+        "tags": [
+          "Anthropic Compatible"
+        ],
+        "summary": "Anthropic Messages",
+        "description": "Anthropic Messages API 兼容接口。可用于 Claude Code 等工具。支持 messages、streaming、system、vision、tools、tool results、thinking 等。",
+        "operationId": "anthropicMessages",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "anthropic-version",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "example": "2023-06-01"
+            },
+            "description": "Ollama 会接受但不使用该 header"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AnthropicMessagesRequest"
+              },
+              "example": {
+                "model": "qwen3-coder",
+                "max_tokens": 1024,
+                "messages": [
+                  {
+                    "role": "user",
+                    "content": "Hello, how are you?"
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "BearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "description": "OpenAI / Anthropic 兼容 SDK 通常要求 api_key；Ollama 本地会接受但忽略。可填 ollama。"
+      }
+    },
+    "schemas": {
+      "ErrorResponse": {
+        "type": "object",
+        "properties": {
+          "error": {
+            "type": "string",
+            "example": "model not found"
+          }
+        },
+        "additionalProperties": true
+      },
+      "RuntimeOptions": {
+        "type": "object",
+        "description": "运行时生成参数。Ollama 会接受与模型 / Modelfile 相关的参数；此处列出常用字段，同时保留 additionalProperties。",
+        "additionalProperties": true,
+        "properties": {
+          "num_keep": {
+            "type": "integer",
+            "description": "保留的上下文 token 数"
+          },
+          "seed": {
+            "type": "integer",
+            "description": "随机种子，用于可复现输出"
+          },
+          "num_predict": {
+            "type": "integer",
+            "description": "最大生成 token 数"
+          },
+          "top_k": {
+            "type": "integer"
+          },
+          "top_p": {
+            "type": "number"
+          },
+          "min_p": {
+            "type": "number"
+          },
+          "typical_p": {
+            "type": "number"
+          },
+          "repeat_last_n": {
+            "type": "integer"
+          },
+          "temperature": {
+            "type": "number",
+            "example": 0.7
+          },
+          "repeat_penalty": {
+            "type": "number"
+          },
+          "presence_penalty": {
+            "type": "number"
+          },
+          "frequency_penalty": {
+            "type": "number"
+          },
+          "mirostat": {
+            "type": "integer"
+          },
+          "mirostat_tau": {
+            "type": "number"
+          },
+          "mirostat_eta": {
+            "type": "number"
+          },
+          "penalize_newline": {
+            "type": "boolean"
+          },
+          "stop": {
+            "oneOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            ]
+          },
+          "num_ctx": {
+            "type": "integer",
+            "description": "上下文窗口大小"
+          },
+          "num_batch": {
+            "type": "integer"
+          },
+          "num_gpu": {
+            "type": "integer"
+          },
+          "main_gpu": {
+            "type": "integer"
+          },
+          "low_vram": {
+            "type": "boolean"
+          },
+          "f16_kv": {
+            "type": "boolean"
+          },
+          "logits_all": {
+            "type": "boolean"
+          },
+          "vocab_only": {
+            "type": "boolean"
+          },
+          "use_mmap": {
+            "type": "boolean"
+          },
+          "use_mlock": {
+            "type": "boolean"
+          },
+          "num_thread": {
+            "type": "integer"
+          }
+        }
+      },
+      "ThinkingControl": {
+        "description": "思考模型的 thinking 控制。支持 boolean，或 high / medium / low / max。",
+        "oneOf": [
+          {
+            "type": "boolean"
+          },
+          {
+            "type": "string",
+            "enum": [
+              "high",
+              "medium",
+              "low",
+              "max",
+              "none"
+            ]
+          }
+        ]
+      },
+      "JsonFormat": {
+        "description": "结构化输出格式。可以是字符串 json，也可以是 JSON Schema 对象。",
+        "oneOf": [
+          {
+            "type": "string",
+            "enum": [
+              "json"
+            ]
+          },
+          {
+            "type": "object",
+            "additionalProperties": true
+          }
+        ]
+      },
+      "KeepAlive": {
+        "description": "模型保活时间，例如 5m；设置为 0 可立即卸载。",
+        "oneOf": [
+          {
+            "type": "string",
+            "example": "5m"
+          },
+          {
+            "type": "number",
+            "example": 0
+          }
+        ]
+      },
+      "OllamaMessage": {
+        "type": "object",
+        "required": [
+          "role",
+          "content"
+        ],
+        "properties": {
+          "role": {
+            "type": "string",
+            "enum": [
+              "system",
+              "user",
+              "assistant",
+              "tool"
+            ],
+            "example": "user"
+          },
+          "content": {
+            "oneOf": [
+              {
+                "type": "string",
+                "example": "为什么天空是蓝色的？"
+              },
+              {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            ]
+          },
+          "thinking": {
+            "type": "string",
+            "description": "思考模型的 thinking 内容"
+          },
+          "images": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "base64 图片列表，视觉模型可用"
+          },
+          "tool_calls": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": true
+            }
+          },
+          "tool_name": {
+            "type": "string",
+            "description": "工具执行结果对应的工具名称"
+          }
+        },
+        "additionalProperties": true
+      },
+      "OllamaTool": {
+        "type": "object",
+        "description": "Ollama tool/function calling 定义",
+        "properties": {
+          "type": {
+            "type": "string",
+            "example": "function"
+          },
+          "function": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string",
+                "example": "get_weather"
+              },
+              "description": {
+                "type": "string",
+                "example": "Get weather for a city"
+              },
+              "parameters": {
+                "type": "object",
+                "additionalProperties": true
+              }
+            },
+            "additionalProperties": true
+          }
+        },
+        "additionalProperties": true
+      },
+      "OllamaGenerateRequest": {
+        "type": "object",
+        "required": [
+          "model"
+        ],
+        "properties": {
+          "model": {
+            "type": "string",
+            "description": "模型名",
+            "example": "qwen2.5:7b"
+          },
+          "prompt": {
+            "type": "string",
+            "description": "用户提示词",
+            "example": "介绍一下 Ollama 是什么"
+          },
+          "suffix": {
+            "type": "string",
+            "description": "Fill-in-the-middle 场景中，模型响应之后的文本"
+          },
+          "images": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "base64 图片列表，视觉模型可用"
+          },
+          "format": {
+            "$ref": "#/components/schemas/JsonFormat"
+          },
+          "system": {
+            "type": "string",
+            "description": "系统提示词，会覆盖 Modelfile 中定义的 system"
+          },
+          "template": {
+            "type": "string",
+            "description": "提示词模板，会覆盖 Modelfile 中定义的 template"
+          },
+          "stream": {
+            "type": "boolean",
+            "default": true,
+            "description": "是否流式返回"
+          },
+          "think": {
+            "$ref": "#/components/schemas/ThinkingControl"
+          },
+          "raw": {
+            "type": "boolean",
+            "description": "true 时不套用 prompt 模板"
+          },
+          "keep_alive": {
+            "$ref": "#/components/schemas/KeepAlive"
+          },
+          "options": {
+            "$ref": "#/components/schemas/RuntimeOptions"
+          },
+          "context": {
+            "type": "array",
+            "items": {
+              "type": "integer"
+            },
+            "deprecated": true,
+            "description": "已废弃：旧版 /api/generate 用于短对话记忆的上下文"
+          },
+          "logprobs": {
+            "type": "boolean",
+            "description": "是否返回 token logprobs"
+          },
+          "top_logprobs": {
+            "type": "integer",
+            "description": "启用 logprobs 时每个位置返回的候选 token 数"
+          },
+          "width": {
+            "type": "integer",
+            "description": "实验性图片生成参数：图片宽度"
+          },
+          "height": {
+            "type": "integer",
+            "description": "实验性图片生成参数：图片高度"
+          },
+          "steps": {
+            "type": "integer",
+            "description": "实验性图片生成参数：扩散步数"
+          }
+        },
+        "additionalProperties": true
+      },
+      "OllamaChatRequest": {
+        "type": "object",
+        "required": [
+          "model",
+          "messages"
+        ],
+        "properties": {
+          "model": {
+            "type": "string",
+            "example": "qwen2.5:7b"
+          },
+          "messages": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/OllamaMessage"
+            }
+          },
+          "tools": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/OllamaTool"
+            }
+          },
+          "format": {
+            "$ref": "#/components/schemas/JsonFormat"
+          },
+          "options": {
+            "$ref": "#/components/schemas/RuntimeOptions"
+          },
+          "stream": {
+            "type": "boolean",
+            "default": true
+          },
+          "think": {
+            "$ref": "#/components/schemas/ThinkingControl"
+          },
+          "keep_alive": {
+            "$ref": "#/components/schemas/KeepAlive"
+          },
+          "logprobs": {
+            "type": "boolean"
+          },
+          "top_logprobs": {
+            "type": "integer"
+          }
+        },
+        "additionalProperties": true
+      },
+      "OllamaEmbedRequest": {
+        "type": "object",
+        "required": [
+          "model",
+          "input"
+        ],
+        "properties": {
+          "model": {
+            "type": "string",
+            "example": "embeddinggemma"
+          },
+          "input": {
+            "oneOf": [
+              {
+                "type": "string",
+                "example": "Ollama 可以本地运行大模型"
+              },
+              {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "example": [
+                  "第一段文本",
+                  "第二段文本"
+                ]
+              }
+            ],
+            "description": "文本或文本数组"
+          },
+          "truncate": {
+            "type": "boolean",
+            "default": true,
+            "description": "超出上下文时是否截断；false 会报错"
+          },
+          "dimensions": {
+            "type": "integer",
+            "description": "输出向量维度"
+          },
+          "keep_alive": {
+            "$ref": "#/components/schemas/KeepAlive"
+          },
+          "options": {
+            "$ref": "#/components/schemas/RuntimeOptions"
+          }
+        },
+        "additionalProperties": true
+      },
+      "OllamaLegacyEmbeddingsRequest": {
+        "type": "object",
+        "required": [
+          "model",
+          "prompt"
+        ],
+        "properties": {
+          "model": {
+            "type": "string",
+            "example": "all-minilm"
+          },
+          "prompt": {
+            "type": "string",
+            "example": "Here is an article about llamas..."
+          },
+          "options": {
+            "$ref": "#/components/schemas/RuntimeOptions"
+          },
+          "keep_alive": {
+            "$ref": "#/components/schemas/KeepAlive"
+          }
+        },
+        "additionalProperties": true
+      },
+      "ModelDetails": {
+        "type": "object",
+        "properties": {
+          "parent_model": {
+            "type": "string"
+          },
+          "format": {
+            "type": "string",
+            "example": "gguf"
+          },
+          "family": {
+            "type": "string",
+            "example": "llama"
+          },
+          "families": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "parameter_size": {
+            "type": "string",
+            "example": "7B"
+          },
+          "quantization_level": {
+            "type": "string",
+            "example": "Q4_K_M"
+          }
+        },
+        "additionalProperties": true
+      },
+      "ModelSummary": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "model": {
+            "type": "string"
+          },
+          "modified_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "size": {
+            "type": "integer"
+          },
+          "digest": {
+            "type": "string"
+          },
+          "details": {
+            "$ref": "#/components/schemas/ModelDetails"
+          }
+        },
+        "additionalProperties": true
+      },
+      "RunningModelSummary": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/ModelSummary"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "expires_at": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "size_vram": {
+                "type": "integer"
+              },
+              "context_length": {
+                "type": "integer"
+              }
+            },
+            "additionalProperties": true
+          }
+        ]
+      },
+      "OllamaShowRequest": {
+        "type": "object",
+        "required": [
+          "model"
+        ],
+        "properties": {
+          "model": {
+            "type": "string",
+            "example": "qwen2.5:7b"
+          },
+          "verbose": {
+            "type": "boolean",
+            "description": "true 时返回 verbose 字段的完整数据"
+          }
+        }
+      },
+      "OllamaCreateRequest": {
+        "type": "object",
+        "required": [
+          "model"
+        ],
+        "properties": {
+          "model": {
+            "type": "string",
+            "description": "要创建的新模型名",
+            "example": "my-qwen"
+          },
+          "from": {
+            "type": "string",
+            "description": "已有模型名",
+            "example": "qwen2.5:7b"
+          },
+          "files": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string"
+            },
+            "description": "从 GGUF / safetensors 创建模型时，文件名到 sha256 blob digest 的映射"
+          },
+          "adapters": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string"
+            },
+            "description": "LoRA adapter 文件名到 sha256 blob digest 的映射"
+          },
+          "template": {
+            "type": "string",
+            "description": "Prompt template"
+          },
+          "license": {
+            "oneOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            ]
+          },
+          "system": {
+            "type": "string"
+          },
+          "parameters": {
+            "type": "object",
+            "additionalProperties": true
+          },
+          "messages": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/OllamaMessage"
+            }
+          },
+          "quantize": {
+            "type": "string",
+            "description": "量化级别，例如 q4_K_M、q8_0"
+          },
+          "stream": {
+            "type": "boolean",
+            "default": true
+          }
+        },
+        "additionalProperties": true
+      },
+      "OllamaCopyRequest": {
+        "type": "object",
+        "required": [
+          "source",
+          "destination"
+        ],
+        "properties": {
+          "source": {
+            "type": "string",
+            "example": "qwen2.5:7b"
+          },
+          "destination": {
+            "type": "string",
+            "example": "qwen2.5-backup:7b"
+          }
+        }
+      },
+      "OllamaPullRequest": {
+        "type": "object",
+        "required": [
+          "model"
+        ],
+        "properties": {
+          "model": {
+            "type": "string",
+            "description": "要下载的模型名",
+            "example": "qwen2.5:7b"
+          },
+          "insecure": {
+            "type": "boolean",
+            "description": "是否允许不安全连接"
+          },
+          "stream": {
+            "type": "boolean",
+            "default": true
+          }
+        }
+      },
+      "OllamaPushRequest": {
+        "type": "object",
+        "required": [
+          "model"
+        ],
+        "properties": {
+          "model": {
+            "type": "string",
+            "description": "要发布的模型名，通常为 namespace/model:tag",
+            "example": "my-username/my-model:latest"
+          },
+          "insecure": {
+            "type": "boolean",
+            "description": "是否允许不安全连接"
+          },
+          "stream": {
+            "type": "boolean",
+            "default": true
+          }
+        }
+      },
+      "OllamaDeleteRequest": {
+        "type": "object",
+        "required": [
+          "model"
+        ],
+        "properties": {
+          "model": {
+            "type": "string",
+            "example": "qwen2.5:7b"
+          }
+        }
+      },
+      "StatusResponse": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "example": "success"
+          },
+          "digest": {
+            "type": "string"
+          },
+          "total": {
+            "type": "integer"
+          },
+          "completed": {
+            "type": "integer"
+          }
+        },
+        "additionalProperties": true
+      },
+      "OllamaGenerateResponse": {
+        "type": "object",
+        "properties": {
+          "model": {
+            "type": "string"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "response": {
+            "type": "string"
+          },
+          "thinking": {
+            "type": "string"
+          },
+          "image": {
+            "type": "string",
+            "description": "图片生成模型最终返回的 base64 图片"
+          },
+          "done": {
+            "type": "boolean"
+          },
+          "done_reason": {
+            "type": "string"
+          },
+          "context": {
+            "type": "array",
+            "items": {
+              "type": "integer"
+            }
+          },
+          "total_duration": {
+            "type": "integer"
+          },
+          "load_duration": {
+            "type": "integer"
+          },
+          "prompt_eval_count": {
+            "type": "integer"
+          },
+          "prompt_eval_duration": {
+            "type": "integer"
+          },
+          "eval_count": {
+            "type": "integer"
+          },
+          "eval_duration": {
+            "type": "integer"
+          },
+          "logprobs": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": true
+            }
+          },
+          "completed": {
+            "type": "integer"
+          },
+          "total": {
+            "type": "integer"
+          }
+        },
+        "additionalProperties": true
+      },
+      "OllamaChatResponse": {
+        "type": "object",
+        "properties": {
+          "model": {
+            "type": "string"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "message": {
+            "$ref": "#/components/schemas/OllamaMessage"
+          },
+          "done": {
+            "type": "boolean"
+          },
+          "done_reason": {
+            "type": "string"
+          },
+          "total_duration": {
+            "type": "integer"
+          },
+          "load_duration": {
+            "type": "integer"
+          },
+          "prompt_eval_count": {
+            "type": "integer"
+          },
+          "prompt_eval_duration": {
+            "type": "integer"
+          },
+          "eval_count": {
+            "type": "integer"
+          },
+          "eval_duration": {
+            "type": "integer"
+          },
+          "logprobs": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": true
+            }
+          }
+        },
+        "additionalProperties": true
+      },
+      "OllamaEmbedResponse": {
+        "type": "object",
+        "properties": {
+          "model": {
+            "type": "string"
+          },
+          "embeddings": {
+            "type": "array",
+            "items": {
+              "type": "array",
+              "items": {
+                "type": "number"
+              }
+            }
+          },
+          "total_duration": {
+            "type": "integer"
+          },
+          "load_duration": {
+            "type": "integer"
+          },
+          "prompt_eval_count": {
+            "type": "integer"
+          }
+        },
+        "additionalProperties": true
+      },
+      "OpenAIChatMessage": {
+        "type": "object",
+        "required": [
+          "role",
+          "content"
+        ],
+        "properties": {
+          "role": {
+            "type": "string",
+            "enum": [
+              "system",
+              "user",
+              "assistant",
+              "tool"
+            ],
+            "example": "user"
+          },
+          "content": {
+            "oneOf": [
+              {
+                "type": "string",
+                "example": "你好"
+              },
+              {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "type": {
+                      "type": "string",
+                      "example": "text"
+                    },
+                    "text": {
+                      "type": "string"
+                    },
+                    "image_url": {
+                      "oneOf": [
+                        {
+                          "type": "string"
+                        },
+                        {
+                          "type": "object",
+                          "properties": {
+                            "url": {
+                              "type": "string"
+                            }
+                          }
+                        }
+                      ]
+                    }
+                  },
+                  "additionalProperties": true
+                }
+              }
+            ]
+          },
+          "name": {
+            "type": "string"
+          },
+          "tool_calls": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": true
+            }
+          },
+          "tool_call_id": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": true
+      },
+      "OpenAIResponseFormat": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "text",
+              "json_object",
+              "json_schema"
+            ],
+            "example": "json_object"
+          },
+          "json_schema": {
+            "type": "object",
+            "additionalProperties": true
+          }
+        },
+        "additionalProperties": true
+      },
+      "OpenAIChatCompletionsRequest": {
+        "type": "object",
+        "required": [
+          "model",
+          "messages"
+        ],
+        "properties": {
+          "model": {
+            "type": "string",
+            "example": "qwen2.5:7b"
+          },
+          "messages": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/OpenAIChatMessage"
+            }
+          },
+          "frequency_penalty": {
+            "type": "number"
+          },
+          "presence_penalty": {
+            "type": "number"
+          },
+          "response_format": {
+            "$ref": "#/components/schemas/OpenAIResponseFormat"
+          },
+          "seed": {
+            "type": "integer"
+          },
+          "stop": {
+            "oneOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            ]
+          },
+          "stream": {
+            "type": "boolean"
+          },
+          "stream_options": {
+            "type": "object",
+            "properties": {
+              "include_usage": {
+                "type": "boolean"
+              }
+            },
+            "additionalProperties": true
+          },
+          "temperature": {
+            "type": "number"
+          },
+          "top_p": {
+            "type": "number"
+          },
+          "max_tokens": {
+            "type": "integer"
+          },
+          "tools": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": true
+            }
+          },
+          "reasoning_effort": {
+            "type": "string",
+            "enum": [
+              "high",
+              "medium",
+              "low",
+              "max",
+              "none"
+            ]
+          },
+          "reasoning": {
+            "type": "object",
+            "properties": {
+              "effort": {
+                "type": "string",
+                "enum": [
+                  "high",
+                  "medium",
+                  "low",
+                  "max",
+                  "none"
+                ]
+              }
+            },
+            "additionalProperties": true
+          },
+          "tool_choice": {
+            "oneOf": [
+              {
+                "type": "string",
+                "enum": [
+                  "none",
+                  "auto",
+                  "required"
+                ]
+              },
+              {
+                "type": "object",
+                "additionalProperties": true
+              }
+            ]
+          },
+          "logit_bias": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "number"
+            }
+          },
+          "user": {
+            "type": "string"
+          },
+          "n": {
+            "type": "integer"
+          }
+        },
+        "additionalProperties": true
+      },
+      "OpenAICompletionsRequest": {
+        "type": "object",
+        "required": [
+          "model",
+          "prompt"
+        ],
+        "properties": {
+          "model": {
+            "type": "string",
+            "example": "qwen2.5:7b"
+          },
+          "prompt": {
+            "type": "string",
+            "description": "Ollama OpenAI 兼容接口当前仅支持 string prompt",
+            "example": "Say this is a test"
+          },
+          "frequency_penalty": {
+            "type": "number"
+          },
+          "presence_penalty": {
+            "type": "number"
+          },
+          "seed": {
+            "type": "integer"
+          },
+          "stop": {
+            "oneOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            ]
+          },
+          "stream": {
+            "type": "boolean"
+          },
+          "stream_options": {
+            "type": "object",
+            "properties": {
+              "include_usage": {
+                "type": "boolean"
+              }
+            },
+            "additionalProperties": true
+          },
+          "temperature": {
+            "type": "number"
+          },
+          "top_p": {
+            "type": "number"
+          },
+          "max_tokens": {
+            "type": "integer"
+          },
+          "suffix": {
+            "type": "string"
+          },
+          "best_of": {
+            "type": "integer"
+          },
+          "echo": {
+            "type": "boolean"
+          },
+          "logit_bias": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "number"
+            }
+          },
+          "user": {
+            "type": "string"
+          },
+          "n": {
+            "type": "integer"
+          }
+        },
+        "additionalProperties": true
+      },
+      "OpenAIEmbeddingsRequest": {
+        "type": "object",
+        "required": [
+          "model",
+          "input"
+        ],
+        "properties": {
+          "model": {
+            "type": "string",
+            "example": "embeddinggemma"
+          },
+          "input": {
+            "oneOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              {
+                "type": "array",
+                "items": {
+                  "type": "integer"
+                }
+              },
+              {
+                "type": "array",
+                "items": {
+                  "type": "array",
+                  "items": {
+                    "type": "integer"
+                  }
+                }
+              }
+            ]
+          },
+          "encoding_format": {
+            "type": "string",
+            "enum": [
+              "float",
+              "base64"
+            ],
+            "description": "文档字段名为 encoding format，OpenAI 风格常用 encoding_format"
+          },
+          "dimensions": {
+            "type": "integer"
+          },
+          "user": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": true
+      },
+      "OpenAIImagesRequest": {
+        "type": "object",
+        "required": [
+          "model",
+          "prompt"
+        ],
+        "properties": {
+          "model": {
+            "type": "string",
+            "example": "x/z-image-turbo"
+          },
+          "prompt": {
+            "type": "string",
+            "example": "A cute robot learning to paint"
+          },
+          "size": {
+            "type": "string",
+            "example": "1024x1024"
+          },
+          "response_format": {
+            "type": "string",
+            "enum": [
+              "b64_json"
+            ],
+            "description": "Ollama 目前仅支持 b64_json"
+          },
+          "n": {
+            "type": "integer"
+          },
+          "quality": {
+            "type": "string"
+          },
+          "style": {
+            "type": "string"
+          },
+          "user": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": true
+      },
+      "OpenAIResponsesRequest": {
+        "type": "object",
+        "required": [
+          "model",
+          "input"
+        ],
+        "properties": {
+          "model": {
+            "type": "string",
+            "example": "qwen2.5:7b"
+          },
+          "input": {
+            "oneOf": [
+              {
+                "type": "string",
+                "example": "Write a short poem about the color blue"
+              },
+              {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            ]
+          },
+          "instructions": {
+            "type": "string"
+          },
+          "tools": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": true
+            }
+          },
+          "stream": {
+            "type": "boolean"
+          },
+          "temperature": {
+            "type": "number"
+          },
+          "top_p": {
+            "type": "number"
+          },
+          "max_output_tokens": {
+            "type": "integer"
+          },
+          "previous_response_id": {
+            "type": "string",
+            "deprecated": true,
+            "description": "Ollama 文档说明 stateful v1/responses 不支持"
+          },
+          "conversation": {
+            "deprecated": true,
+            "description": "Ollama 文档说明 stateful v1/responses 不支持"
+          },
+          "truncation": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": true
+      },
+      "AnthropicContentBlock": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "example": "text"
+          },
+          "text": {
+            "type": "string"
+          },
+          "source": {
+            "type": "object",
+            "additionalProperties": true
+          },
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "input": {
+            "type": "object",
+            "additionalProperties": true
+          },
+          "tool_use_id": {
+            "type": "string"
+          },
+          "content": {}
+        },
+        "additionalProperties": true
+      },
+      "AnthropicMessage": {
+        "type": "object",
+        "required": [
+          "role",
+          "content"
+        ],
+        "properties": {
+          "role": {
+            "type": "string",
+            "enum": [
+              "user",
+              "assistant"
+            ],
+            "example": "user"
+          },
+          "content": {
+            "oneOf": [
+              {
+                "type": "string",
+                "example": "Hello, how are you?"
+              },
+              {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/AnthropicContentBlock"
+                }
+              }
+            ]
+          }
+        },
+        "additionalProperties": true
+      },
+      "AnthropicMessagesRequest": {
+        "type": "object",
+        "required": [
+          "model",
+          "max_tokens",
+          "messages"
+        ],
+        "properties": {
+          "model": {
+            "type": "string",
+            "example": "qwen3-coder"
+          },
+          "max_tokens": {
+            "type": "integer",
+            "example": 1024
+          },
+          "messages": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AnthropicMessage"
+            }
+          },
+          "system": {
+            "oneOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/AnthropicContentBlock"
+                }
+              }
+            ]
+          },
+          "stream": {
+            "type": "boolean"
+          },
+          "temperature": {
+            "type": "number"
+          },
+          "top_p": {
+            "type": "number"
+          },
+          "top_k": {
+            "type": "integer"
+          },
+          "stop_sequences": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "tools": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": true
+            }
+          },
+          "thinking": {
+            "type": "object",
+            "additionalProperties": true
+          },
+          "tool_choice": {
+            "oneOf": [
+              {
+                "type": "object",
+                "additionalProperties": true
+              },
+              {
+                "type": "string"
+              }
+            ],
+            "description": "Ollama 文档列为 request field，但差异说明中提到强制具体 tool / 禁用 tools 不支持"
+          },
+          "metadata": {
+            "type": "object",
+            "additionalProperties": true,
+            "description": "Ollama 文档列为 request field，但差异说明中提到 request metadata 不支持"
+          }
+        },
+        "additionalProperties": true
+      }
+    }
+  }
+}
