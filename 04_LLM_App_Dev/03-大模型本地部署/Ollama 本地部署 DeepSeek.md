@@ -161,6 +161,56 @@ systemctl restart ollama  # 重启
 * AI 根据官方文档生成的中文版接口文档：[ollama_openapi.json](ollama_openapi.json)
 * 中文版接口文档导入 Apifox：https://s.apifox.cn/0aced474-3fce-444d-a0ff-39473bdee79e
 
+
+
+在 `/api/chat` 这类聊天对话接口里，模型每次接收到的信息并不仅仅是本轮对话用户发给它的那句话，而是一个完整的对话历史消息数组：
+
+```json
+{
+  "messages": [
+    // 这里是系统提示词
+    {
+      "role": "system",
+      "content": "你是一个地理老师"
+    },
+    
+    // 注意：这里是系统提示词的示例部分（严格来讲叫“少样本示例”），而不是用户提示词，用来让模型参考学习的
+    {
+      "role": "user",
+      "content": "中国的首都是哪里？"
+    },
+    {
+      "role": "assistant",
+      "content": "北京"
+    },
+    
+    // 这里是之前的对话历史
+    {
+      "role": "user",
+      "content": "浙江的省会是哪里？"
+    },
+    {
+      "role": "assistant",
+      "content": "杭州"
+    },
+    
+    // 这里是本轮对话的用户问题
+    {
+      "role": "user",
+      "content": "西湖在哪个区？"
+    }
+  ]
+}
+```
+
+这里的 role 就是在告诉模型，每段 content 是什么角色说的话：
+
+* system：系统指令，一般用来对应系统提示词的非示例部分
+* user：一般用来对应用户提示词
+* assistant：一般用来对应模型的回复
+
+但需要注意的是这里的 role 不是代表提示词类型，它只是代表某条消息类型，就像我们上面的例子那样系统提示词里可以包含 system、user、assistant 类型的消息
+
 #### 4、Ollama 常用命令
 
 | 系统命令                | 说明                                                         |

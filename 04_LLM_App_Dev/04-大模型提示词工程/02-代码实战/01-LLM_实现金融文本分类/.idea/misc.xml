@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="Black">
+    <option name="sdkName" value="01-LLM_实现金融文本分类" />
+  </component>
+  <component name="ProjectRootManager" version="2" project-jdk-name="01-LLM_实现金融文本分类" project-jdk-type="Python SDK" />
+  <component name="TimeTrackingManager">
+    <option name="totallyTimeSpent" value="51000" />
+  </component>
+</project>
