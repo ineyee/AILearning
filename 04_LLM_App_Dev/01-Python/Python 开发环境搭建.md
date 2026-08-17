@@ -35,6 +35,18 @@
 * 环境变量也自动帮我们配置好了
 * 终端执行 conda --version 或 conda -V 来验证是否安装成功
 
+> // 1、创建一个新的 conda 环境，名字叫 python_basic，里面安装 python@3.13
+> conda create --name python_basic python=3.13
+>
+> // 2、进入某个环境
+> conda activate python_basic
+>
+> // 3、退出某个环境
+> conda deactivate
+>
+> // 4、查看有多少个 conda 环境
+> conda env list
+
 ## 三、本机安装 PyCharm
 
 * PyCharm 下载地址：https://www.jetbrains.com/zh-cn/pycharm/download/?section=mac
